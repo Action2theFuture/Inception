@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./requirement/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - inception_network
+    secrets:
+      - db_root_password
+      - db_password
+
+  wordpress:
+    build:
+      context: ./requirement/wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    volumes:
+      - wordpress_files:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD_FILE: ${WORDPRESS_DB_PASSWORD_FILE}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+    restart: always
+    networks:
+      - inception_network
+    secrets:
+      - db_password
+
+  db:
+    build:
+      context: ./requirement/mariadb
+      dockerfile: Dockerfile
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: ${MYSQL_ROOT_PASSWORD_FILE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD_FILE: ${MYSQL_PASSWORD_FILE}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    networks:
+      - inception_network
+    secrets:
+      - db_root_password
+      - db_password
+
+networks:
+  inception_network:
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/yourlogin/data/db_data
+      o: bind
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/yourlogin/data/wordpress_files
+      o: bind
+
+secrets:
+  db_root_password:
+    file: ../secret/db_root_password.txt
+  db_password:
+    file: ../secret/db_password.txt
+
