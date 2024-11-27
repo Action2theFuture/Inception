@@ -7,14 +7,15 @@ RUN apt-get update && apt-get upgrade -y && \
     wget https://wordpress.org/latest.zip && \
     unzip latest.zip -d /var/www/html && \
     rm latest.zip && \
+    wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp && \
     rm -rf /var/lib/apt/lists/*
 
 # PHP-FPM 설정 복사
 COPY conf/www.conf /etc/php/*/fpm/pool.d/www.conf
 
-# 워드프레스 파일 디렉토리 설정
-VOLUME ["/var/www/html"]
+COPY --chmod=0755 /conf/entrypoint.sh /usr/local/bin/wp_entrypont.sh
 
-# PHP-FPM 실행
-CMD ["php-fpm8.2", "-F"]
+EXPOSE 9000
 
+ENTRYPOINT ["/usr/local/bin/wp_entrypont.sh"]
