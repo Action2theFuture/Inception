@@ -1,5 +1,7 @@
 OS := $(shell uname)
 USER_PATH := $(HOME)
+UID := $(shell id -u)
+GID := $(shell id -g)
 
 ifeq ($(OS), Linux)
     DATA_PATH := $(USER_PATH)/data
@@ -26,6 +28,7 @@ init:
 	@sudo chmod -R 755 $(DB_DATA_PATH)
 	@sudo chown -R $(whoami):staff $(WORDPRESS_FILES_PATH)
 	@sudo chmod -R 755 $(WORDPRESS_FILES_PATH)
+
 ifeq ($(OS), Linux)
 else ifeq ($(OS), Darwin)
 	@colima stop
@@ -36,19 +39,19 @@ endif
 
 build: init
 	@echo "Building Docker containers..."
-	docker-compose -f src/docker-compose.yml build --no-cache
+	docker-compose -f srcs/docker-compose.yml build --no-cache --build-arg UID=$(UID) --build-arg GID=$(GID)
 
 up:
 	@echo "Starting Docker containers..."
-	docker-compose -f src/docker-compose.yml up -d
+	docker-compose -f srcs/docker-compose.yml up -d
 
 down:
 	@echo "Stopping Docker containers..."
-	docker-compose -f src/docker-compose.yml down
+	docker-compose -f srcs/docker-compose.yml down -v
 
 restart:
 	@echo "Restarting Docker containers..."
-	docker-compose -f src/docker-compose.yml restart
+	docker-compose -f srcs/docker-compose.yml restart
 
 clean: down
 	@echo "Cleaning up Docker system..."

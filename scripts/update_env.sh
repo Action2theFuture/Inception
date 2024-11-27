@@ -1,11 +1,11 @@
 #!/bin/bash
 
-
-DATA_PATH="/inception/data"
+USER_PATH=$HOME
+DATA_PATH="$USER_PATH/data"
 DB_DATA_PATH="$DATA_PATH/db_data"
 WORDPRESS_FILES_PATH="$DATA_PATH/wordpress_files"
 
-ENV_FILE="./src/.env"
+ENV_FILE="./srcs/.env"
 
 add_env_var() {
     local var_name="$1"
@@ -18,8 +18,15 @@ add_env_var() {
     fi
 }
 
+HOST_UID=$(id -u)
+HOST_GID=$(id -g)
+
 # 확인 및 추가
 add_env_var "DATA_PATH" "$DATA_PATH"
 add_env_var "DB_DATA_PATH" "$DB_DATA_PATH"
 add_env_var "WORDPRESS_FILES_PATH" "$WORDPRESS_FILES_PATH"
+add_env_var "UID" "$HOST_UID"
+add_env_var "GID" "$HOST_GID"
+
+echo "Host directories ownership updated to UID:$HOST_UID and GID:$HOST_GID"
 
