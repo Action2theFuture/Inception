@@ -4,14 +4,17 @@ FROM debian:bookworm
 RUN apt-get update && apt-get install -y \
     nginx \
     openssl \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # NGINX 설정 파일 복사
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-# TLS 인증서 및 키 복사
-COPY conf/cert.pem /etc/ssl/certs/
-COPY conf/key.pem /etc/ssl/private/
+RUN mkdir -p /etc/ssl/certs
+RUN mkdir -p /etc/ssl/private
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/key.pem \
+    -out /etc/ssl/certs/cert.pem -subj "/CN=junsan.42.fr/O=Inception Project"
 
 # 포트 개방
 EXPOSE 443

@@ -9,8 +9,6 @@ set -x  # 디버깅을 위한 명령어 출력 활성화
 # MariaDB 로그 파일 경로 설정
 LOG_FILE="/var/lib/mysql/mariadb.err"
 
-chown -R mysql:mysql /var/lib/mysql /run/mysqld
-
 # Initialize the database if not already initialized
 if [ ! -d "/var/lib/mysql/${MYSQL_DATABASE}" ]; then
     echo "Inception : ${MYSQL_DATABASE} database is being created."

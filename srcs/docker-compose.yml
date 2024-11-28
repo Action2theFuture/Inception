@@ -4,6 +4,8 @@ services:
       context: ./requirements/nginx
       dockerfile: Dockerfile
     container_name: nginx
+    volumes:
+      - wordpress_files:/var/www/wordpress
     ports:
       - "443:443"
     depends_on:
@@ -18,8 +20,9 @@ services:
       dockerfile: Dockerfile
     container_name: wordpress
     volumes:
-      - wordpress_files:/var/www/html
+      - wordpress_files:/var/www/wordpress
     environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
@@ -27,6 +30,8 @@ services:
     restart: on-failure
     networks:
       - inception_network
+    depends_on:
+      - db
 
   db:
     build:
@@ -40,7 +45,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     volumes:
       - db_data:/var/lib/mysql
-    restart: always
+    restart: on-failure
     networks:
       - inception_network
 
