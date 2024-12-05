@@ -3,7 +3,7 @@
 USER_PATH=$HOME
 DATA_PATH="$USER_PATH/data"
 DB_DATA_PATH="$DATA_PATH/db_data"
-WORDPRESS_FILES_PATH="$DATA_PATH/wordpress_files"
+WORDPRESS_FILES_PATH="$DATA_PATH/wordpress"
 
 ENV_FILE="./srcs/.env"
 

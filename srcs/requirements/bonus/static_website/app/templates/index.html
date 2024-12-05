@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas</title>
+    <link rel="shortcut icon" href="https://freepngimg.com/download/christmas/26196-6-christmas-stocking.png">
+    <meta property="og:image" content="https://cdn.pixabay.com/photo/2016/11/19/14/00/christmas-1837854_1280.jpg"> 
+    <meta property="og:title" content="Christmas">
+    <meta property="og:description" content="For 2024">
+    <script src="https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/xmas/snow.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Stylish&display=swap" rel="stylesheet">
+    <style>
+        * {
+        font-family: 'Stylish', sans-serif;
+        }
+
+        body {
+            background-color: #9b070f;
+        }
+
+        .envelope {
+            width: 200px;
+            height: 200px;
+
+            background-image: url(https://pngimg.com/uploads/envelope/envelope_PNG18366.png);
+            background-size: cover;
+            background-position: center;
+
+            margin: 200px auto 0px auto;
+
+            cursor: pointer;
+        }
+
+        .open {
+            color: white;
+            text-align: center;
+        }
+
+        .body-close {
+            display: block;
+        }
+
+        .body-open {
+            display: none;
+        }
+
+        .moon {
+            width: 200px;
+            height: 200px;
+
+            background-size: cover;
+            background-position: center;
+            background-color: white;
+
+            border-radius: 100px;
+
+            border: 10px solid white;
+            box-shadow: 0px 0px 15px 0px white;
+
+            margin: 100px auto 0px auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .msg-box {
+            background-color: ivory;
+
+
+            width: 400px;
+            margin: auto;
+
+            padding: 30px;
+
+            font-size: 10;
+
+            color: brown;
+            line-height: 30px;
+
+            box-shadow: 0px 0px 10px 0px white;
+        }
+
+        .from {
+            text-align: right;
+            margin-bottom: 0px;
+        }
+
+        @media screen and (max-width: 760px) {
+            .msg-box {
+                width: 320px;
+                padding: 20px;
+            }
+
+            .envelope {
+                margin: 300px auto 0px auto;
+            }
+        }
+    </style>
+    <script>
+        function open_letter() {
+            document.getElementsByClassName("body-close")[0].style.display = 'none'
+            document.getElementsByClassName("body-open")[0].style.display = 'block'
+        }
+
+        function touch_moon() {
+            alert('JJAN')
+        }
+    </script>
+</head>
+<body>
+    <div class="body-close">
+        <div class="envelope" onclick="open_letter()"></div>
+        <h2 class="open">Open</h2>
+    </div>
+    <div class="body-open">
+        <div class="moon" onclick="touch_moon()"></div>
+        <h1>Good Bye, 2024</h1>
+        <div class="msg-box">
+            Hello, 2025 <br />
+            <p class="from">2024.12.25</p>
+        </div>
+    </div>
+</body>
+</html>
