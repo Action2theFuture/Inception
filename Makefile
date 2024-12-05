@@ -1,15 +1,9 @@
 OS := $(shell uname)
 USER_PATH := $(HOME)
 
-ifeq ($(OS), Linux)
-    DATA_PATH := $(USER_PATH)/data
-    DB_DATA_PATH := $(USER_PATH)/data/db_data
-    WORDPRESS_FILES_PATH := $(USER_PATH)/data/wordpress_files
-else ifeq ($(OS), Darwin)
-    DATA_PATH := $(USER_PATH)/data
-    DB_DATA_PATH := $(USER_PATH)/data/db_data
-    WORDPRESS_FILES_PATH := $(USER_PATH)/data/wordpress_files
-endif
+DATA_PATH := $(USER_PATH)/data
+DB_DATA_PATH := $(DATA_PATH)/db_data
+WORDPRESS_FILES_PATH := $(DATA_PATH)/wordpress
 
 export DATA_PATH
 
@@ -27,7 +21,8 @@ init:
 	@sudo chown -R $(whoami):staff $(WORDPRESS_FILES_PATH)
 	@sudo chmod -R 755 $(WORDPRESS_FILES_PATH)
 	@sudo chmod +x ./scripts/update_env.sh
-	@./scripts/update_env.sh $(DATA_PATH) $(DB_DATA_PATH) $(WORDPRESS_FILES_PATH)
+	@./scripts/update_env.sh $(DATA_PATH) $(DB_DATA_PATH) \
+	$(WORDPRESS_FILES_PATH)
 
 build: init
 	@echo "Building Docker containers..."
