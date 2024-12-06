@@ -4,6 +4,7 @@ USER_PATH=$HOME
 DATA_PATH="$USER_PATH/data"
 DB_DATA_PATH="$DATA_PATH/db_data"
 WORDPRESS_FILES_PATH="$DATA_PATH/wordpress"
+GRAFANA_DATA_PATH="$DATA_PATH/grafana_data"
 
 ENV_FILE="./srcs/.env"
 
@@ -22,3 +23,4 @@ add_env_var() {
 add_env_var "DATA_PATH" "$DATA_PATH"
 add_env_var "DB_DATA_PATH" "$DB_DATA_PATH"
 add_env_var "WORDPRESS_FILES_PATH" "$WORDPRESS_FILES_PATH"
+add_env_var "GRAFANA_DATA_PATH" "$GRAFANA_DATA_PATH"

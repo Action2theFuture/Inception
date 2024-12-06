@@ -5,7 +5,15 @@ RUN apt-get update && apt-get install -y \
     nginx \
     openssl \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    apache2-utils && \
+    rm -rf /var/lib/apt/lists/*
+
+# 빌드 인자 정의
+ARG NGINX_USER_NAME
+ARG NGINX_USER_PASSWORD
+
+# .htpasswd 파일 생성
+RUN htpasswd -cb /etc/nginx/.htpasswd ${NGINX_USER_NAME} ${NGINX_USER_PASSWORD}
 
 # NGINX 설정 파일 복사
 COPY conf/nginx.conf /etc/nginx/nginx.conf
