@@ -103,29 +103,35 @@ services:
     build: ./requirements/bonus/prometheus
     container_name: prometheus
     networks:
-      - inception_monitoring
       - inception_webnet
     expose:
       - "9090"
+    depends_on:
+      - redis-exporter
+      - nginx-prometheus-exporter
 
   grafana:
     build: ./requirements/bonus/grafana
     container_name: grafana
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.junsan.42.fr/
+      # - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
+    networks:
+      - inception_webnet
     depends_on:
       - prometheus
-    networks:
-      - inception_monitoring
-      - inception_webnet
+    ports:
+      - "3000:3000" 
 
-  nginx-exporter:
-    image: bitnami/nginx-exporter:latest
-    container_name: nginx-exporter
+  nginx-prometheus-exporter:
+    build: ./requirements/bonus/nginx-prometheus-exporter
+    container_name: nginx-prometheus-exporter
     ports:
       - "9113:9113"
-    environment:
-      - NGINX_STATUS=http://nginx/nginx_status
     networks:
       - inception_webnet
 
@@ -143,6 +149,9 @@ services:
 networks:
   inception_webnet:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
   inception_monitoring:
     driver: bridge
     internal: true
@@ -151,21 +160,4 @@ networks:
 volumes:
   db_data:
     driver: local
-    driver_opts:
-      type: 'none'
-      device: ${DB_DATA_PATH}
-      o: 'bind'
-  wordpress_files:
-    driver: local
-    driver_opts:
-      type: 'none'
-      device: ${WORDPRESS_FILES_PATH}
-      o: 'bind'
-  grafana_data:
-    driver: local
-    driver_opts:
-      type: 'none'
-      device: ${GRAFANA_DATA_PATH}
-      o: 'bind'
-
-
+ 
