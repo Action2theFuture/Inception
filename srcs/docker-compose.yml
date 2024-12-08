@@ -1,0 +1,171 @@
+services:
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+      args:
+        NGINX_USER_NAME: ${NGINX_USER_NAME}
+        NGINX_USER_PASSWORD: ${NGINX_USER_PASSWORD}
+    container_name: nginx
+    volumes:
+      - wordpress_files:/var/www/wordpress
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+      - static_website
+      - adminer
+      - prometheus
+      - grafana
+    restart: on-failure
+    networks:
+      - inception_webnet
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    volumes:
+      - wordpress_files:/var/www/wordpress
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    restart: on-failure
+    networks:
+      - inception_webnet
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: on-failure
+    networks:
+      - inception_webnet
+
+  redis:
+    build:
+      context: ./requirements/bonus/redis
+      dockerfile: Dockerfile
+    container_name: redis
+    restart: on-failure
+    networks:
+      - inception_webnet
+    expose:
+      - "6379"
+  
+  ftp:
+    build:
+      context: ./requirements/bonus/ftp
+      dockerfile: Dockerfile
+    container_name: ftp
+    ports:
+      - "21:21"
+      - "40000-40005:40000-40005"
+    volumes:
+      - wordpress_files:/var/www/wordpress
+    restart: on-failure
+    networks:
+      - inception_webnet
+
+  adminer:
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+    container_name: adminer
+    restart: on-failure
+    networks:
+      - inception_webnet
+  
+  static_website:
+    build:
+      context: ./requirements/bonus/static_website
+      dockerfile: Dockerfile
+    container_name: static_website
+    restart: on-failure
+    networks:
+      - inception_webnet
+
+  prometheus:
+    build: ./requirements/bonus/prometheus
+    container_name: prometheus
+    networks:
+      - inception_monitoring
+      - inception_webnet
+    expose:
+      - "9090"
+
+  grafana:
+    build: ./requirements/bonus/grafana
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - inception_monitoring
+      - inception_webnet
+
+  nginx-exporter:
+    image: bitnami/nginx-exporter:latest
+    container_name: nginx-exporter
+    ports:
+      - "9113:9113"
+    environment:
+      - NGINX_STATUS=http://nginx/nginx_status
+    networks:
+      - inception_webnet
+
+  redis-exporter:
+    image: bitnami/redis-exporter:latest
+    container_name: redis-exporter
+    ports:
+      - "9121:9121"
+    command: ["--redis.addr=redis:6379"]
+    networks:
+      - inception_webnet
+    depends_on:
+      - redis
+
+networks:
+  inception_webnet:
+    driver: bridge
+  inception_monitoring:
+    driver: bridge
+    internal: true
+
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: ${DB_DATA_PATH}
+      o: 'bind'
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: ${WORDPRESS_FILES_PATH}
+      o: 'bind'
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: ${GRAFANA_DATA_PATH}
+      o: 'bind'
+
+
