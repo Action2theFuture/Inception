@@ -21,13 +21,13 @@ RUN mkdir -p /usr/share/grafana/data/plugins && \
 COPY entrypoint.sh /usr/local/bin/grafana_entrypoint.sh
 RUN chmod +x /usr/local/bin/grafana_entrypoint.sh
 
+# 엔트리포인트 스크립트 설정
+ENTRYPOINT ["/usr/local/bin/grafana_entrypoint.sh"]
+
 USER grafana
 
 # 포트 개방
 EXPOSE 3000
-
-# 엔트리포인트 스크립트 설정
-ENTRYPOINT ["/usr/local/bin/grafana_entrypoint.sh"]
 
 # Grafana 실행
 CMD ["grafana-server", "--homepath=/usr/share/grafana", "cfg:default.paths.data=/var/lib/grafana"]

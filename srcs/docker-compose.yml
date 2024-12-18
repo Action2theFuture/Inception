@@ -102,6 +102,7 @@ services:
   prometheus:
     build: ./requirements/bonus/prometheus
     container_name: prometheus
+    restart: on-failure
     networks:
       - inception_webnet
     expose:
@@ -113,6 +114,7 @@ services:
   grafana:
     build: ./requirements/bonus/grafana
     container_name: grafana
+    restart: on-failure
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.junsan.42.fr/
       # - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
@@ -124,8 +126,8 @@ services:
       - inception_webnet
     depends_on:
       - prometheus
-    ports:
-      - "3000:3000" 
+    # ports:
+    #   - "3000:3000" 
 
   nginx-prometheus-exporter:
     build: ./requirements/bonus/nginx-prometheus-exporter
@@ -136,11 +138,10 @@ services:
       - inception_webnet
 
   redis-exporter:
-    image: bitnami/redis-exporter:latest
+    build: ./requirements/bonus/redis-exporter
     container_name: redis-exporter
     ports:
       - "9121:9121"
-    command: ["--redis.addr=redis:6379"]
     networks:
       - inception_webnet
     depends_on:
@@ -160,4 +161,19 @@ networks:
 volumes:
   db_data:
     driver: local
- 
+    driver_opts:
+      type: 'none'
+      device: ${DB_DATA_PATH}
+      o: 'bind'
+  wordpress_files:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: ${WORDPRESS_FILES_PATH}
+      o: 'bind'
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      device: ${GRAFANA_DATA_PATH}
+      o: 'bind'
