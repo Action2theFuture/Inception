@@ -3,6 +3,8 @@
 set -e
 
 DOMAIN_NAME="junsan.42.fr"
+PROMETHEUS_SUBDOMAIN="prometheus.junsan.42.fr"
+GRAFANA_SUBDOMAIN="grafana.junsan.42.fr"
 USER_PATH="$HOME"
 DATA_PATH="$USER_PATH/data"
 DB_DATA_PATH="$DATA_PATH/db_data"
@@ -49,12 +51,23 @@ add_env_var "DB_DATA_PATH" "$DB_DATA_PATH"
 add_env_var "WORDPRESS_FILES_PATH" "$WORDPRESS_FILES_PATH"
 add_env_var "GRAFANA_DATA_PATH" "$GRAFANA_DATA_PATH"
 
-echo "Updating /etc/hosts to route 127.0.0.1 to $DOMAIN_NAME..."
-if ! grep -q "127.0.0.1 $DOMAIN_NAME" /etc/hosts; then
-    echo "127.0.0.1 $DOMAIN_NAME" | sudo tee -a /etc/hosts > /dev/null
-    echo "Added routing to /etc/hosts."
-else
-    echo "Routing already exists in /etc/hosts."
-fi
+echo "Updating /etc/hosts to route 127.0.0.1 to $DOMAIN_NAME and subdomains..."
+
+# Function to add a hostname to /etc/hosts if it doesn't already exist
+add_host_entry() {
+    local ip="$1"
+    shift
+    for host in "$@"; do
+        if ! grep -q "^$ip\s\+$host" /etc/hosts; then
+            echo "$ip $host" | sudo tee -a /etc/hosts > /dev/null
+            echo "Added $host to /etc/hosts."
+        else
+            echo "Routing for $host already exists in /etc/hosts."
+        fi
+    done
+}
+
+# Add main domain and subdomains
+add_host_entry "127.0.0.1" "$DOMAIN_NAME" "$PROMETHEUS_SUBDOMAIN" "$GRAFANA_SUBDOMAIN"
 
 echo "Initialization completed successfully!"

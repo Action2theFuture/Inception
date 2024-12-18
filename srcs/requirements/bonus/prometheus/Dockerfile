@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:bookworm
 
 # 기본 패키지 업데이트 및 필요한 패키지 설치
 RUN apt-get update && \

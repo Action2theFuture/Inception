@@ -17,12 +17,11 @@ echo "DB_USER=$WORDPRESS_DB_USER"
 echo "DB_PASSWORD=$WORDPRESS_DB_PASSWORD"
 echo "DB_HOST=$WORDPRESS_DB_HOST"
 
-cd $WORDPRESS_PATH;
-
 sleep 10;
 
 # Check if wp-config.php exists and validate its content
-if [ ! -f "/var/www/html/wordpress/wp-config.php" ] ; then
+if [ ! -f "$WP_CONFIG_PATH" ] ; then
+    cd $WORDPRESS_PATH
     rm -rf $WORDPRESS_PATH/*
 
     echo "Inception: ✔ Download core file" >> "$CONFIG_LOG_PATH"
@@ -78,11 +77,10 @@ if [ ! -f "/var/www/html/wordpress/wp-config.php" ] ; then
     # Redis 캐시 활성화
     wp redis enable --allow-root --path="." >> "$REDIS_LOG_PATH" 2>&1
 fi
-    
 
 # Ensure ownership and permissions
 chown -R www-data:www-data /var/www/wordpress
 chmod -R 755 /var/www/wordpress
 
 echo "wordpress start !!"
-/usr/sbin/php-fpm8.2 -F
+exec "$@"

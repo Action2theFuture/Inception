@@ -102,39 +102,46 @@ services:
   prometheus:
     build: ./requirements/bonus/prometheus
     container_name: prometheus
+    restart: on-failure
     networks:
-      - inception_monitoring
       - inception_webnet
     expose:
       - "9090"
+    depends_on:
+      - redis-exporter
+      - nginx-prometheus-exporter
 
   grafana:
     build: ./requirements/bonus/grafana
     container_name: grafana
+    restart: on-failure
+    environment:
+      - GF_SERVER_ROOT_URL=https://grafana.junsan.42.fr/
+      # - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
+    networks:
+      - inception_webnet
     depends_on:
       - prometheus
-    networks:
-      - inception_monitoring
-      - inception_webnet
+    # ports:
+    #   - "3000:3000" 
 
-  nginx-exporter:
-    image: bitnami/nginx-exporter:latest
-    container_name: nginx-exporter
+  nginx-prometheus-exporter:
+    build: ./requirements/bonus/nginx-prometheus-exporter
+    container_name: nginx-prometheus-exporter
     ports:
       - "9113:9113"
-    environment:
-      - NGINX_STATUS=http://nginx/nginx_status
     networks:
       - inception_webnet
 
   redis-exporter:
-    image: bitnami/redis-exporter:latest
+    build: ./requirements/bonus/redis-exporter
     container_name: redis-exporter
     ports:
       - "9121:9121"
-    command: ["--redis.addr=redis:6379"]
     networks:
       - inception_webnet
     depends_on:
@@ -143,6 +150,9 @@ services:
 networks:
   inception_webnet:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
   inception_monitoring:
     driver: bridge
     internal: true
@@ -167,5 +177,3 @@ volumes:
       type: 'none'
       device: ${GRAFANA_DATA_PATH}
       o: 'bind'
-
-
