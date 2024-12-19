@@ -7,6 +7,8 @@ services:
         NGINX_USER_NAME: ${NGINX_USER_NAME}
         NGINX_USER_PASSWORD: ${NGINX_USER_PASSWORD}
     container_name: nginx
+    env_file:
+      - .env
     volumes:
       - wordpress_files:/var/www/wordpress
     ports:
@@ -26,6 +28,8 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     container_name: wordpress
+    env_file:
+      - .env
     volumes:
       - wordpress_files:/var/www/wordpress
     environment:
@@ -45,6 +49,8 @@ services:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     container_name: db
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
@@ -100,7 +106,10 @@ services:
       - inception_webnet
 
   prometheus:
-    build: ./requirements/bonus/prometheus
+    build: 
+      context: ./requirements/bonus/prometheus
+      args:
+        ARCH: ${ARCH}
     container_name: prometheus
     restart: on-failure
     networks:
@@ -114,12 +123,16 @@ services:
   grafana:
     build: ./requirements/bonus/grafana
     container_name: grafana
+    env_file:
+      - .env
     restart: on-failure
     environment:
       - GF_SERVER_ROOT_URL=https://grafana.junsan.42.fr/
       # - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
       - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD}
+      - GF_PATHS_PLUGINS=/usr/share/grafana/data/plugins
+      - GF_INSTALL_PLUGINS=grafana-lokiexplore-app
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
@@ -127,10 +140,13 @@ services:
     depends_on:
       - prometheus
     # ports:
-    #   - "3000:3000" 
+    # - "3000:3000" 
 
   nginx-prometheus-exporter:
-    build: ./requirements/bonus/nginx-prometheus-exporter
+    build: 
+      context: ./requirements/bonus/nginx-prometheus-exporter
+      args:
+        ARCH: ${ARCH}
     container_name: nginx-prometheus-exporter
     ports:
       - "9113:9113"
@@ -138,7 +154,10 @@ services:
       - inception_webnet
 
   redis-exporter:
-    build: ./requirements/bonus/redis-exporter
+    build: 
+      context: ./requirements/bonus/redis-exporter
+      args:
+        ARCH: ${ARCH}
     container_name: redis-exporter
     ports:
       - "9121:9121"

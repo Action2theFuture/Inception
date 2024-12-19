@@ -29,7 +29,7 @@ clean: down
 	
 fclean: clean
 	@echo "Full Cleaning up Docker system"
-	@rm -rf $(DATA_PATH)
-	@sudo docker volume prune -a -f;
+	@sudo rm -rf $(DATA_PATH)
+	@sudo docker system prune -a -f;
 
 .PHONY: init all build up down restart clean delete fclean
