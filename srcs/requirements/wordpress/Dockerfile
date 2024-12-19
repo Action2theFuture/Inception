@@ -35,7 +35,9 @@ RUN apt-get update && apt-get upgrade -y && \
 # PHP-FPM 설정 복사
 COPY /conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
-COPY --chmod=0755 /conf/entrypoint.sh /usr/local/bin/wp_entrypont.sh
+COPY /conf/entrypoint.sh /usr/local/bin/wp_entrypont.sh
+
+RUN chmod 755 /usr/local/bin/wp_entrypont.sh
 
 EXPOSE 9000
 
