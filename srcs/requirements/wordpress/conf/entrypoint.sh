@@ -25,7 +25,7 @@ if [ ! -f "$WP_CONFIG_PATH" ] ; then
     rm -rf $WORDPRESS_PATH/*
 
     echo "Inception: ✔ Download core file" >> "$CONFIG_LOG_PATH"
-    wp core download --allow-root
+    wp core download --allow-root >> "$CONFIG_LOG_PATH"
 
     echo "Creating wp-config.php for $DOMAIN_NAME" >> "$CONFIG_LOG_PATH"
     # Create wp-config.php

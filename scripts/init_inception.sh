@@ -24,16 +24,12 @@ mkdir -p "$GRAFANA_DATA_PATH"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."
-sudo chown -R "$(whoami):staff" "$DATA_PATH"
 sudo chmod -R 755 "$DATA_PATH"
 
-sudo chown -R "$(whoami):staff" "$DB_DATA_PATH"
 sudo chmod -R 755 "$DB_DATA_PATH"
 
-sudo chown -R "$(whoami):staff" "$WORDPRESS_FILES_PATH"
 sudo chmod -R 755 "$WORDPRESS_FILES_PATH"
 
-sudo chown -R "$(whoami):staff" "$GRAFANA_DATA_PATH"
 sudo chmod -R 755 "$GRAFANA_DATA_PATH"
 
 # Run the update_env.sh script

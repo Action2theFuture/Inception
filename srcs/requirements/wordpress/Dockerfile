@@ -16,7 +16,9 @@ RUN apt-get update && apt-get upgrade -y && \
     curl \
     vim \
     telnet \
-    redis-tools && \
+    redis-tools \
+    dnsutils \
+    iputils-ping && \
     mkdir -p /var/www && \
     wget https://wordpress.org/wordpress-${WORDPRESS_VERSION}.zip && \
     unzip wordpress-${WORDPRESS_VERSION}.zip -d /var/www && \

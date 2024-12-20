@@ -25,7 +25,8 @@ delete:
 
 clean: down
 	@echo "Cleaning up Docker system..."
-	@docker-compose -p inception -f srcs/docker-compose.yml down -v --remove-orphans --rmi all
+	@docker-compose -f srcs/docker-compose.yml down -v --remove-orphans --rmi all
+	@docker network prune
 	
 fclean: clean
 	@echo "Full Cleaning up Docker system"
