@@ -14,16 +14,16 @@ up: init
 
 down:
 	@echo "Stopping Docker containers..."
-	docker-compose -f srcs/docker-compose.yml down -v
+	docker-compose -f srcs/docker-compose.yml down
 
 restart:
 	@echo "Restarting Docker containers..."
 	docker-compose -f srcs/docker-compose.yml restart
 
 delete:
-	@rm -rf $(DATA_PATH)
+	@sudo rm -rf $(DATA_PATH)
 
-clean: down
+clean:
 	@echo "Cleaning up Docker system..."
 	@docker-compose -f srcs/docker-compose.yml down -v --remove-orphans --rmi all
 	@docker network prune

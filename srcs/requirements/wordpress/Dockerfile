@@ -10,15 +10,8 @@ ENV REDIS_CACHE_VERSION=2.5.4
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y \
     php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-redis \
-    wget \
-    unzip \
-    net-tools \
-    curl \
-    vim \
-    telnet \
-    redis-tools \
-    dnsutils \
-    iputils-ping && \
+    wget unzip net-tools curl vim telnet dnsutils iproute2 iputils-ping \
+    redis-tools && \
     mkdir -p /var/www && \
     wget https://wordpress.org/wordpress-${WORDPRESS_VERSION}.zip && \
     unzip wordpress-${WORDPRESS_VERSION}.zip -d /var/www && \

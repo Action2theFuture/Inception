@@ -2,7 +2,7 @@ FROM debian:bookworm
 
 # 필수 패키지 설치
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y mariadb-server && \
+    apt-get install -y mariadb-server curl && \
     rm -rf /var/lib/apt/lists/*
 
 COPY /conf/my.cnf /etc/mysql/my.cnf
