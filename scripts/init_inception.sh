@@ -10,6 +10,12 @@ DATA_PATH="$USER_PATH/data"
 DB_DATA_PATH="$DATA_PATH/db_data"
 WORDPRESS_FILES_PATH="$DATA_PATH/wordpress"
 GRAFANA_DATA_PATH="$DATA_PATH/grafana_data"
+ARCH="$(uname -m)"
+
+# aarch64를 arm64로 매핑
+if [ "$ARCH" = "aarch64" ]; then
+    ARCH="arm64"
+fi
 
 echo "Creating necessary directories..."
 mkdir -p "$DB_DATA_PATH"
@@ -18,16 +24,12 @@ mkdir -p "$GRAFANA_DATA_PATH"
 
 # Set ownership and permissions
 echo "Setting ownership and permissions..."
-sudo chown -R "$(whoami):staff" "$DATA_PATH"
 sudo chmod -R 755 "$DATA_PATH"
 
-sudo chown -R "$(whoami):staff" "$DB_DATA_PATH"
 sudo chmod -R 755 "$DB_DATA_PATH"
 
-sudo chown -R "$(whoami):staff" "$WORDPRESS_FILES_PATH"
 sudo chmod -R 755 "$WORDPRESS_FILES_PATH"
 
-sudo chown -R "$(whoami):staff" "$GRAFANA_DATA_PATH"
 sudo chmod -R 755 "$GRAFANA_DATA_PATH"
 
 # Run the update_env.sh script
@@ -51,6 +53,9 @@ add_env_var "DB_DATA_PATH" "$DB_DATA_PATH"
 add_env_var "WORDPRESS_FILES_PATH" "$WORDPRESS_FILES_PATH"
 add_env_var "GRAFANA_DATA_PATH" "$GRAFANA_DATA_PATH"
 
+echo "Updating ARCH environment variable..."
+add_env_var "ARCH" "$ARCH"
+
 echo "Updating /etc/hosts to route 127.0.0.1 to $DOMAIN_NAME and subdomains..."
 
 # Function to add a hostname to /etc/hosts if it doesn't already exist
@@ -69,5 +74,7 @@ add_host_entry() {
 
 # Add main domain and subdomains
 add_host_entry "127.0.0.1" "$DOMAIN_NAME" "$PROMETHEUS_SUBDOMAIN" "$GRAFANA_SUBDOMAIN"
+
+# Add Architecture
 
 echo "Initialization completed successfully!"

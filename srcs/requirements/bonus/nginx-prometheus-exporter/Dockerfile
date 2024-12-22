@@ -7,13 +7,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV VERSION=1.4.0
+ARG ARCH=amd64
 
 # Download and extract nginx-prometheus-exporter
-RUN wget https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v${VERSION}/nginx-prometheus-exporter_${VERSION}_linux_amd64.tar.gz \
-    && tar -xzf nginx-prometheus-exporter_${VERSION}_linux_amd64.tar.gz \
+RUN wget https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v${VERSION}/nginx-prometheus-exporter_${VERSION}_linux_$ARCH.tar.gz \
+    && tar -xzf nginx-prometheus-exporter_${VERSION}_linux_$ARCH.tar.gz \
     && mv nginx-prometheus-exporter /usr/local/bin/ \
     && chmod +x /usr/local/bin/nginx-prometheus-exporter \
-    && rm -rf nginx-prometheus-exporter_${VERSION}_linux_amd64.tar.gz
+    && rm -rf nginx-prometheus-exporter_${VERSION}_linux_$ARCH.tar.gz
 
 # Expose port 9113
 EXPOSE 9113

@@ -7,13 +7,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV VERSION=1.67.0
+ARG ARCH=amd64
 
 # Download and extract nginx-prometheus-exporter
-RUN wget https://github.com/oliver006/redis_exporter/releases/download/v${VERSION}/redis_exporter-v${VERSION}.linux-amd64.tar.gz \
-    && tar -xzf redis_exporter-v${VERSION}.linux-amd64.tar.gz \
-    && mv redis_exporter-v${VERSION}.linux-amd64/redis_exporter /usr/local/bin/ \
+RUN wget https://github.com/oliver006/redis_exporter/releases/download/v${VERSION}/redis_exporter-v${VERSION}.linux-$ARCH.tar.gz \
+    && tar -xzf redis_exporter-v${VERSION}.linux-$ARCH.tar.gz \
+    && mv redis_exporter-v${VERSION}.linux-$ARCH/redis_exporter /usr/local/bin/ \
     && chmod +x /usr/local/bin/redis_exporter \
-    && rm -rf redis-exporter-v${VERSION}.linux-amd64.tar.gz redis_exporter-v${VERSION}.linux-amd64 
+    && rm -rf redis-exporter-v${VERSION}.linux-$ARCH.tar.gz redis_exporter-v${VERSION}.linux-$ARCH 
 
 # Expose port 9121
 EXPOSE 9121

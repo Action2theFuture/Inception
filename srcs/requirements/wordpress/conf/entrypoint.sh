@@ -4,7 +4,6 @@ set -x
 
 echo "Running as $(whoami)" 
 
-sleep 10
 WP_CONFIG_PATH=/var/www/wordpress/wp-config.php
 CONFIG_LOG_PATH=/var/www/wordpress/wp_config_log.txt
 CORE_LOG_PATH=/var/www/wordpress/wp_core_log.txt
@@ -17,15 +16,31 @@ echo "DB_USER=$WORDPRESS_DB_USER"
 echo "DB_PASSWORD=$WORDPRESS_DB_PASSWORD"
 echo "DB_HOST=$WORDPRESS_DB_HOST"
 
-sleep 10;
+sleep 5;
+
+WP_CONFIG_EXISTS=false
+if [ -f "$WP_CONFIG_PATH" ] ; then
+    WP_CONFIG_EXISTS=true
+fi
+
+WP_INSTALLED=false
+if wp core is-installed --allow-root --path="$WORDPRESS_PATH" >/dev/null 2>&1; then
+    WP_INSTALLED=true
+fi
+
+echo "WP_CONFIG_EXISTS=$WP_CONFIG_EXISTS, WP_INSTALLED=$WP_INSTALLED"
 
 # Check if wp-config.php exists and validate its content
-if [ ! -f "$WP_CONFIG_PATH" ] ; then
+if [ "$WP_CONFIG_EXISTS" = "false" ] || [ "$WP_INSTALLED" = "false" ]; then
+    
+    echo "[init] WordPress is not fully set up (config or DB missing). Let's install."
+
     cd $WORDPRESS_PATH
     rm -rf $WORDPRESS_PATH/*
+    echo "[init] Cleaned up existing WordPress folder."
 
     echo "Inception: ✔ Download core file" >> "$CONFIG_LOG_PATH"
-    wp core download --allow-root
+    wp core download --allow-root --path="$WORDPRESS_PATH" >> "$CONFIG_LOG_PATH"
 
     echo "Creating wp-config.php for $DOMAIN_NAME" >> "$CONFIG_LOG_PATH"
     # Create wp-config.php
@@ -76,11 +91,13 @@ if [ ! -f "$WP_CONFIG_PATH" ] ; then
 
     # Redis 캐시 활성화
     wp redis enable --allow-root --path="." >> "$REDIS_LOG_PATH" 2>&1
+else
+    echo "[init] WordPress config + DB are already present. Skipping re-install."
 fi
 
 # Ensure ownership and permissions
-chown -R www-data:www-data /var/www/wordpress
-chmod -R 755 /var/www/wordpress
+chown -R www-data:www-data "$WORDPRESS_PATH"
+chmod -R 755 "$WORDPRESS_PATH"
 
 echo "wordpress start !!"
 exec "$@"

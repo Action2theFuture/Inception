@@ -10,12 +10,7 @@ ENV REDIS_CACHE_VERSION=2.5.4
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y \
     php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-redis \
-    wget \
-    unzip \
-    net-tools \
-    curl \
-    vim \
-    telnet \
+    wget unzip net-tools curl vim telnet dnsutils iproute2 iputils-ping \
     redis-tools && \
     mkdir -p /var/www && \
     wget https://wordpress.org/wordpress-${WORDPRESS_VERSION}.zip && \
@@ -35,7 +30,9 @@ RUN apt-get update && apt-get upgrade -y && \
 # PHP-FPM 설정 복사
 COPY /conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
-COPY --chmod=0755 /conf/entrypoint.sh /usr/local/bin/wp_entrypont.sh
+COPY /conf/entrypoint.sh /usr/local/bin/wp_entrypont.sh
+
+RUN chmod 755 /usr/local/bin/wp_entrypont.sh
 
 EXPOSE 9000
 
