@@ -12,10 +12,20 @@ WORDPRESS_FILES_PATH="$DATA_PATH/wordpress"
 GRAFANA_DATA_PATH="$DATA_PATH/grafana_data"
 ARCH="$(uname -m)"
 
-# aarch64를 arm64로 매핑
-if [ "$ARCH" = "aarch64" ]; then
-    ARCH="arm64"
-fi
+# ARCH 값 매핑
+case "$ARCH" in
+    aarch64)
+        ARCH="arm64"
+        ;;
+    x86_64)
+        ARCH="amd64"
+        ;;
+    # 추가적인 아키텍처 매핑 필요시 여기서 추가
+    *)
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
 
 echo "Creating necessary directories..."
 mkdir -p "$DB_DATA_PATH"

@@ -16,7 +16,7 @@ echo "DB_USER=$WORDPRESS_DB_USER"
 echo "DB_PASSWORD=$WORDPRESS_DB_PASSWORD"
 echo "DB_HOST=$WORDPRESS_DB_HOST"
 
-sleep 5;
+sleep 10;
 
 WP_CONFIG_EXISTS=false
 if [ -f "$WP_CONFIG_PATH" ] ; then
