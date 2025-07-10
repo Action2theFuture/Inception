@@ -105,6 +105,13 @@ Ensure the following directories exist on the host system:
   127.0.0.1 grafana.junsan.42.fr
   127.0.0.1 prometheus.junsan.42.fr
   ```
+- How to login Adminer
+  ```
+  server : <DB_HOST>
+  user name : <USER>
+  password : <PASSWORD>
+  database : <DATABASE_NAME>
+  ```
 - Verify Docker Compose network configurations to avoid connectivity issues.
 
 ## Directory Structure
