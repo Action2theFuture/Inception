@@ -34,6 +34,7 @@ services:
       - wordpress_files:/var/www/wordpress
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
+      WORDPRESS_ADMIN_NAME: ${ADMIN_NAME}
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}

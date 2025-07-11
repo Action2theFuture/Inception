@@ -61,9 +61,9 @@ if [ "$WP_CONFIG_EXISTS" = "false" ] || [ "$WP_INSTALLED" = "false" ]; then
     echo "Inception : ✔ Download core wordpress files to $WORDPRESS_PATH" >> "$CORE_LOG_PATH" 2>&1
     wp core install --url="$DOMAIN_NAME" \
         --title="Test Site" \
-        --admin_user="admin" \
+        --admin_user="$WORDPRESS_ADMIN_NAME" \
         --admin_password="1q2w3e4r" \
-        --admin_email="admin@test.com" \
+        --admin_email="junsan@test.com" \
         --allow-root --path="." >> "$CORE_LOG_PATH" 2>&1
 
     if [ $? -ne 0 ]; then
